@@ -1,12 +1,17 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM continuumio/miniconda3
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt .
+# Copy the Conda environment specification file
+COPY requirements.yml /app/
+
+# Create the Conda environment using the .yml file
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Activate the environment
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
 # Copy the rest of the application code
 COPY . .
@@ -18,5 +23,5 @@ EXPOSE 5000
 ENV FLASK_APP=run.py
 ENV FLASK_ENV=production
 
-# Start the Flask application
-CMD ["python", "run.py"]
+# Start the Flask application using the Conda environment
+CMD ["conda", "run", "-n", "myenv", "python", "run.py"]
