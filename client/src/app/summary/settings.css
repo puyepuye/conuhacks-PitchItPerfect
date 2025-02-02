@@ -1,0 +1,91 @@
+/* Move Logo to the Top-Left Corner */
+.logo-container {
+    position: absolute;
+    top: 32px;  /* Keeps the same top padding */
+    left: 40px;  /* Moves the logo to the left */
+    display: flex;
+    flex-direction: column; /* Stacks logo and text */
+    align-items: center; /* Ensures they remain centered */
+    justify-content: center;
+    text-align: center;
+    gap: 12px; /* Space between logo and text */
+}
+  
+/* Adjust Logo Size */
+.logo {
+    width: 45px; /* Slightly smaller for better alignment */
+    height: auto;
+}
+  
+/* Move "Pitch" Slightly to the Left */
+.logo-text {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 0; /* Reset any previous adjustments */
+}
+
+.toggle-container {
+    position: absolute;
+    top: 45px; /* Adjusts positioning */
+    right: 40px; /* Moves to top-right */
+}
+
+/* Toggle Button Wrapper */
+.toggle {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    height: 46px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.54) 0%, #FFFFFF 100%);
+    border-radius: 50px;
+    padding: 4px; /* Inner spacing */
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    flex: 1;
+    height: 38px;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    color: #003899;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+/* Active Button */
+.toggle-btn.active {
+    background: #002147;
+    color: white;
+}
+
+/* Custom scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+.scroll-box::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
+  }
+  
+  .scroll-box::-webkit-scrollbar-track {
+    background: transparent; /* Invisible track */
+    border-radius: 10px;
+  }
+  
+  .scroll-box::-webkit-scrollbar-thumb {
+    background: transparent; /* Initially transparent */
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.6); /* White outline */
+  }
+  
+  /* Show the scrollbar on hover */
+  .scroll-box:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3); /* Light white fill */
+  }
+  
+  /* For Firefox */
+  .scroll-box {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.6) transparent;
+  }
+  
