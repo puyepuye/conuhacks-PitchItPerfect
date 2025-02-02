@@ -1,0 +1,13 @@
+name: pitchip-env
+channels:
+  - conda-forge
+  - anaconda
+dependencies:
+  - python=3.9
+  - opencv
+  - numpy
+  - spacy
+  - transformers
+  - pytorch
+  - nltk
+  - pip
