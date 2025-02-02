@@ -18,6 +18,7 @@ export default function PitchPage() {
   const microphoneRef = useRef(null);
   const recognitionRef = useRef(null);
   const intervalRef = useRef(null);
+  const detectEmotionRef = useRef(false);
 
   const loadModels = async () => {
     const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights';
@@ -27,6 +28,8 @@ export default function PitchPage() {
     ]);
   };
 
+  loadModels();
+  
   const initAudio = async () => {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = audioContext.createAnalyser();
@@ -70,26 +73,71 @@ export default function PitchPage() {
     }
   };
 
+  const handleVideoOnPlay = () => {
+    console.log("PEEEEEEE");
+    setInterval(async () => {
+      if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
+        const video = webcamRef.current.video;
+        const canvas = canvasRef.current;
+        const displaySize = {
+          width: video.videoWidth,
+          height: video.videoHeight,
+        };
+  
+        faceapi.matchDimensions(canvas, displaySize);
+  
+        const detections = await faceapi
+          .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceExpressions();
+  
+        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+  
+        const context = canvas.getContext("2d");
+     
+        if (context) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          faceapi.draw.drawDetections(canvas, resizedDetections);
+          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+        }
+  
+
+        if (detectEmotionRef.current) {  
+          console.log("TRIPLE PROGRAMMING");
+          const emotions = resizedDetections.flatMap((det) => 
+            Object.entries(det.expressions).map(([emotion, confidence]) => [emotion, confidence])
+          );
+
+          if (emotions.length > 0) {
+            setEmotionData((prev) => [...prev, ...emotions]);
+          }
+        }
+      }
+    }, 100);
+  };
+  
   const startRecording = () => {
     setPitchData([]);
     setVolumeData([]);
     setEmotionData([]);
     setTranscription("");
     setRecording(true);
-    
+    detectEmotionRef.current = true; 
+  
     initAudio();
     initSpeechRecognition();
     recognitionRef.current?.start();
-
+   
+    handleVideoOnPlay();
+  
     intervalRef.current = setInterval(() => {
       if (analyserRef.current) {
         const bufferLength = analyserRef.current.fftSize;
         const dataArray = new Float32Array(bufferLength);
         analyserRef.current.getFloatTimeDomainData(dataArray);
-
+  
         const rms = Math.sqrt(dataArray.reduce((sum, val) => sum + val * val, 0) / bufferLength);
         setVolumeData((prev) => [...prev, rms]);
-
+  
         const detectPitch = Pitchfinder.YIN({ sampleRate: audioContextRef.current.sampleRate });
         const pitch = detectPitch(dataArray);
         if (pitch && pitch < 1000) {
@@ -133,6 +181,8 @@ export default function PitchPage() {
   const stopRecording = () => {
     recognitionRef.current?.stop();
     setRecording(false);
+    console.log("STOP RECORD EMOTION", detectEmotionRef.current);
+    detectEmotionRef.current = false; 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -160,6 +210,7 @@ export default function PitchPage() {
       <p className="text-lg">{transcription}</p>
       <h2 className="mt-4 font-semibold">Current Pitch: {pitchData[pitchData.length - 1]?.toFixed(2)} Hz</h2>
       <h2 className="mt-4 font-semibold">Current Volume: {volumeData[volumeData.length - 1]?.toFixed(2)}</h2>
+      <h2 className="mt-4 font-semibold">Current Emotion: {emotionData[emotionData.length - 1]? emotionData.length > 0 : ""}</h2>
       <div style={{ position: "relative" }}>
         <Webcam
           ref={webcamRef}
