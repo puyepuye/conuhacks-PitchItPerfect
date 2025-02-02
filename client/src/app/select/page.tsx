@@ -22,13 +22,11 @@ export default function SelectPage() {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="nav-buttons">
       <div className="toggle-container">
       <div className="toggle">
         <button className="toggle-btn active">Practice</button>
         <button className="toggle-btn">Profile</button>
       </div>
-    </div>
       </div>
 
       {/* Heading */}

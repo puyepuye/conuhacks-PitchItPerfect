@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import "./settings.css"; // Import the updated styles
+import Image from "next/image";
 
 const PitchUploader: React.FC = () => {
   // Generate options for 0-59 minutes & seconds
@@ -20,13 +22,25 @@ const PitchUploader: React.FC = () => {
         left: 0,
         width: "100vw",
         height: "100vh",
-        background: "linear-gradient(-45deg, #48C5FD 0%, #2A9BF9 21%, #0F75F6 33%, #003899 65%, #01132F 100%)",
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "center",
         paddingLeft: "10vw",
       }}
     >
+
+      <div className="logo-container">
+        <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
+        <span className="logo-text">Pitch</span>
+      </div>
+
+      <div className="toggle-container">
+        <div className="toggle">
+          <button className="toggle-btn active">Practice</button>
+          <button className="toggle-btn">Profile</button>
+        </div>
+      </div>
+
       {/* Main Settings Box */}
       <div
         style={{
@@ -149,7 +163,7 @@ const PitchUploader: React.FC = () => {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <label style={{ color: "#003899", fontSize: "1rem", fontWeight: "600" }}>Rubrics</label>
             <p style={{ color: "#666", fontSize: "0.9rem" }}>
-              How do you want to be assessed? Upload your own or use our public speaking rubrics.
+              How do you want to be assessed? Use our public speaking rubrics.
             </p>
           </div>
           <select
@@ -166,7 +180,6 @@ const PitchUploader: React.FC = () => {
           >
             <option value="default">Select a rubric</option>
             <option value="public">Use Public Speaking Rubric</option>
-            <option value="custom">Upload Your Own</option>
           </select>
         </div>
 
@@ -185,7 +198,7 @@ const PitchUploader: React.FC = () => {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <label style={{ color: "#003899", fontSize: "1rem", fontWeight: "600" }}>Pitching Slides</label>
             <p style={{ color: "#666", fontSize: "0.9rem" }}>
-              What slides are you going to be using? Optional upload to get personalized feedback.
+              Upload the slides you are going to be using for personalized feedback. 
             </p>
           </div>
           <input
