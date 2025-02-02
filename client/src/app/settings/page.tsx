@@ -1,34 +1,107 @@
 "use client";
 
-import React from "react";
-import "./settings.css"; // Import the updated styles
-import Image from "next/image";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MyPdfViewer } from "@/components/ui/PdfViewer";
+import "./settings.css"; // Import the updated styles
 
-export default function SelectPage() {
+const PdfTextExtractor: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [extractedText, setExtractedText] = useState<string | null>(null); // Stores extracted text
+  const [projectName, setProjectName] = useState("");
+  const [isExtracted, setIsExtracted] = useState(false);
+  const [minutes, setMinutes] = useState("0");
+const [seconds, setSeconds] = useState("0");
+
+console.log(isExtracted);
   const router = useRouter();
 
-  const handleProjectNavigation = () => {
-    router.push("/pitch"); 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
   };
 
-  return <PitchUploader handleProjectNavigation={handleProjectNavigation} />;
-}
+  const handleProjectNavigation = () => {
+    if (!projectName || !minutes || !seconds) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+    
+    router.push(`/pitch?projectName=${encodeURIComponent(projectName)}&minutes=${encodeURIComponent(minutes)}&seconds=${encodeURIComponent(seconds)}`);
+  };
 
-  const PitchUploader: React.FC<{ handleProjectNavigation: () => void }> = ({
-    handleProjectNavigation,
-  }) => {
-      // Generate options for 0-59 minutes & seconds
-      const generateOptions = () => {
-        return Array.from({ length: 60 }, (_, i) => (
-          <option key={i} value={i}>
-            {i}
-          </option>
-        ));
-      };
+  const uploadPdf = async () => { // NOT USED ANYMORE BUT KEPT FOR
+    if (!file) return;
 
-      return (
-        <div
+    const formData = new FormData();
+    formData.append("file", file);
+
+    await fetch("/api/upload-slides", {
+      method: "POST",
+      body: formData,
+    });
+
+    router.push("/pitch");
+  };
+
+
+  const exText = async () => {
+    console.log("Extract text called");
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      // Step 1: Upload PDF
+      const uploadResponse = await fetch("/api/upload-slides", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!uploadResponse.ok) {
+        console.error("Error uploading PDF");
+        return;
+      }
+  
+      console.log("PDF uploaded successfully");
+  
+      // Step 2: Extract text from the uploaded PDF
+      const extractResponse = await fetch("/api/extract-text", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!extractResponse.ok) {
+        console.error("Error extracting text");
+        return;
+      }
+  
+      const { textContent } = await extractResponse.json(); // Get extracted text
+      console.log("Extracted Text:", textContent);
+  
+      const textPreview = textContent.substring(0, 50) + "..."; // Get first 50 characters
+      console.log("Preview:", textPreview);
+      setIsExtracted(true);
+      setExtractedText(textPreview);
+    } catch (error) {
+      console.error("Error during upload or extraction:", error);
+    }
+  };
+  
+   const generateOptions = () => {
+    return Array.from({ length: 60 }, (_, i) => (
+      <option key={i} value={i}>
+        {i}
+      </option>
+    ));
+  };
+
+  return (
+    <div
           style={{
             position: "fixed",
             top: 0,
@@ -44,7 +117,7 @@ export default function SelectPage() {
         >
 
           <div className="logo-container">
-            <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
+            {/* <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/> */}
             <span className="logo-text">Pitch</span>
           </div>
 
@@ -88,19 +161,22 @@ export default function SelectPage() {
                   Name your project something creative and descriptive.
                 </p>
               </div>
-              <input
-                type="text"
-                style={{
-                  width: "60%",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  border: "none",
-                  backgroundColor: "white",
-                  fontSize: "1rem",
-                  outline: "none",
-                  color: "black",
-                }}
-              />
+             
+            <input
+              type="text"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              style={{
+                width: "60%",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "none",
+                backgroundColor: "white",
+                fontSize: "1rem",
+                outline: "none",
+                color: "black",
+              }}
+            />
             </div>
 
             {/* Time Limit Section (Minutes & Seconds Dropdowns) */}
@@ -124,42 +200,47 @@ export default function SelectPage() {
               {/* Dropdowns for Minutes & Seconds */}
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <select
-                    style={{
-                      padding: "10px",
-                      borderRadius: "10px",
-                      border: "none",
-                      backgroundColor: "white",
-                      fontSize: "1rem",
-                      outline: "none",
-                      color: "black",
-                    }}
-                  >
-                    {generateOptions()}
-                  </select>
-                  <span style={{ color: "#666", fontSize: "0.9rem", marginTop: "5px" }}>Minutes</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <select
-                    style={{
-                      padding: "10px",
-                      borderRadius: "10px",
-                      border: "none",
-                      backgroundColor: "white",
-                      fontSize: "1rem",
-                      outline: "none",
-                      color: "black",
-                    }}
-                  >
-                    {generateOptions()}
-                  </select>
-                  <span style={{ color: "#666", fontSize: "0.9rem", marginTop: "5px" }}>Seconds</span>
+                <select
+                  value={minutes}
+                  onChange={(e) => setMinutes(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border: "none",
+                    backgroundColor: "white",
+                    fontSize: "1rem",
+                    outline: "none",
+                    color: "black",
+                  }}
+                >
+                  {generateOptions()}
+                </select>
+                <span style={{ color: "#666", fontSize: "0.9rem", marginTop: "5px" }}>Minutes</span>
+
+                <select
+                  value={seconds}
+                  onChange={(e) => setSeconds(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border: "none",
+                    backgroundColor: "white",
+                    fontSize: "1rem",
+                    outline: "none",
+                    color: "black",
+                  }}
+                >
+                  {generateOptions()}
+                </select>
+                <span style={{ color: "#666", fontSize: "0.9rem", marginTop: "5px" }}>Seconds</span>
+
                 </div>
               </div>
             </div>
 
             {/* File Upload Section */}
-            <h2 style={{ color: "#003899", fontSize: "1.8rem", fontWeight: "bold" }}>File Upload</h2>
+        <h2 style={{ color: "#003899", fontSize: "1.8rem", fontWeight: "bold" }}>File Upload</h2>
+
 
             {/* Rubrics Section (Dropdown) */}
             <div
@@ -196,41 +277,25 @@ export default function SelectPage() {
               </select>
             </div>
 
-            {/* Pitching Slides Section */}
-            <div
-              style={{
-                background: "transparent",
-                borderRadius: "15px",
-                padding: "1rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "1rem",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label style={{ color: "#003899", fontSize: "1rem", fontWeight: "600" }}>Pitching Slides</label>
-                <p style={{ color: "#666", fontSize: "0.9rem" }}>
-                  Upload the slides you are going to be using for personalized feedback. 
-                </p>
+             {/* Pitching Slides Section */}
+                <div className="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md space-y-4">
+                <h2 className="text-xl font-bold">Upload a PDF</h2>
+                <Input type="file" accept="application/pdf" onChange={handleFileChange} />
+                <Button onClick={exText} disabled={!file} >
+                  Save & Extract Words
+                </Button>
+
+                {/* Display extracted text preview */}
+                {extractedText && (
+                  <div className="mt-2">
+                    <h3 className="text-lg font-semibold">First few lines of PDF:</h3>
+                    <p className="text-sm text-gray-700">{extractedText}</p>
+                  </div>
+                )}
               </div>
-              <input
-                type="file"
-                style={{
-                  width: "40%",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  border: "none",
-                  backgroundColor: "white",
-                  fontSize: "1rem",
-                  outline: "none",
-                  color: "black",
-                }}
-              />
-            </div>
           </div>
-    {/* Save and Continue Button - Now Sticks to Bottom-Right */}
-    <button
+
+     <button
         style={{
           top: "89vh",
           position: "fixed", // Sticks inside the settings box
@@ -247,10 +312,13 @@ export default function SelectPage() {
         }}
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#004899")}
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#005BBB")}
-        onClick={handleProjectNavigation}
+        onClick={handleProjectNavigation}  disabled={!isExtracted}
       >
         Save and Continue
       </button>
         </div>
   );
 };
+
+
+export default PdfTextExtractor;
