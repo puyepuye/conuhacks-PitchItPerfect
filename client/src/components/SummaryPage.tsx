@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@/app/summary/summary.css"; // Import the updated styles
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 
 // Define the interface for the data prop
@@ -24,22 +25,21 @@ const SummaryPage: React.FC<SummaryPageProps> = ({data}) => {
 
   return (
     <div className="summary-container">
-    <h1 className="summary-title">Performance Summary</h1>
+      <h1 className="summary-title">Performance Summary</h1>
 
-    <div className="summary-box">
-
-      <div className="logo-container">
-          <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
+      <div className="summary-box">
+        <div className="logo-container">
+          <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo" />
           <span className="logo-text">Pitch</span>
-      </div>
-      
-      {/* Navigation Buttons */}
-      <div className="toggle-container">
-      <div className="toggle">
-          <button className="toggle-btn active">Practice</button>
-          <button className="toggle-btn">Profile</button>
-      </div>
-      </div>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="toggle-container">
+          <div className="toggle">
+            <button className="toggle-btn active">Practice</button>
+            <button className="toggle-btn">Profile</button>
+          </div>
+        </div>
 
         <div className="metrics-container">
           <div className="metric-item">Filler Word Count</div>

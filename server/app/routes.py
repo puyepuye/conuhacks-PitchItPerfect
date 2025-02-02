@@ -70,6 +70,7 @@ def register_routes(app):
         persuasiveness_feedback = is_persuasive(text, context)
 
         # Return all analysis results in a single response
+<<<<<<< HEAD
         return jsonify(
             {
                 "filler_feedback": filler_feedback,
@@ -129,3 +130,13 @@ def register_routes(app):
                 "rubric_feedback": rubric_feedback,
             }
         ), 200
+=======
+        return jsonify({
+            "filler_feedback": filler_feedback,
+            "sentiment_feedback": sentiment_feedback,
+            "modulation_analysis": modulation_analysis,
+            "articulation_analysis": articulation_analysis,
+            "persuasiveness_feedback": persuasiveness_feedback,
+            "filler_data": filler_data
+        })
+>>>>>>> 9515c26 (pitch graph added)

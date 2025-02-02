@@ -16,12 +16,15 @@ import "./pitch.css";
 export default function PitchPage() {
 
   const router = useRouter();
+<<<<<<< HEAD
   const handleProjectNavigation = () => {
     router.push(
       `/summary?filler=${encodeURIComponent(filler)}&fillerNum=${encodeURIComponent(fillerNum)}&sentiment=${encodeURIComponent(sentiment)}&modulation=${encodeURIComponent(modulation)}&articulation=${encodeURIComponent(articulation)}&persuasiveness=${encodeURIComponent(persuasiveness)}}&rubrik=${encodeURIComponent(rubrik)}`
     );
   };
 
+=======
+>>>>>>> 9515c26 (pitch graph added)
   const [transcription, setTranscription] = useState("");
   const [recording, setRecording] = useState(false);
   const [pitchData, setPitchData] = useState([]);
@@ -29,6 +32,7 @@ export default function PitchPage() {
   const [emotionData, setEmotionData] = useState([]);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const volumeCanvasRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const microphoneRef = useRef(null);
@@ -237,6 +241,12 @@ console.log("Project Name:", projectName);
     }
     sendData();
   };
+
+  // Assuming `pitchData` is an array
+const handleProjectNavigation = () => {
+  const pitchDataParam = encodeURIComponent(JSON.stringify(pitchData)); // serialize data
+  router.push(`/summary?pitchData=${pitchDataParam}`);
+};
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
