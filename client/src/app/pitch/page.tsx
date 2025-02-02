@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "@vladmandic/face-api";
 import Pitchfinder from "pitchfinder";
+import PdfJs from "@/components/PdfJs";
 
 export default function PitchPage() {
   const [transcription, setTranscription] = useState("");
@@ -99,7 +100,6 @@ export default function PitchPage() {
 
     initAudio();
 
-    // Cleanup function
     return () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
@@ -178,23 +178,10 @@ export default function PitchPage() {
       <h2 className="mt-4 font-semibold">Transcription:</h2>
       <p className="text-lg">{transcription}</p>
       <div style={{ position: "relative" }}>
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          onPlay={handleVideoOnPlay}
-          style={{ width: 640, height: 480 }}
-        />
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 640,
-            height: 480,
-          }}
-        />
+        <Webcam ref={webcamRef} audio={false} onPlay={handleVideoOnPlay} />
+        <canvas ref={canvasRef} />
       </div>
+      {/* <PdfJs src="/uploads/local-attempt.pdf" />  */}
     </div>
   );
 }

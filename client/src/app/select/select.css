@@ -1,0 +1,202 @@
+/* Move Logo to the Top-Left Corner */
+.logo-container {
+    position: absolute;
+    top: 32px;  /* Keeps the same top padding */
+    left: 40px;  /* Moves the logo to the left */
+    display: flex;
+    flex-direction: column; /* Stacks logo and text */
+    align-items: center; /* Ensures they remain centered */
+    justify-content: center;
+    text-align: center;
+    gap: 12px; /* Space between logo and text */
+}
+  
+/* Adjust Logo Size */
+.logo {
+    width: 45px; /* Slightly smaller for better alignment */
+    height: auto;
+}
+  
+/* Move "Pitch" Slightly to the Left */
+.logo-text {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 0; /* Reset any previous adjustments */
+}
+  
+/* Center Align the Heading */
+.heading {
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 100%;
+    position: absolute;
+    top: 11%; /* Adjusts the Y position for proper centering */
+    left: 50%;
+    transform: translateX(-50%); /* Ensures it is perfectly centered */
+    width: fit-content;
+}
+  
+.card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px; /* Keeps gap centered */
+    width: 90%;
+    max-width: 1300px;
+    margin: 70px auto 0; /* Moves the boxes down */
+}  
+  
+.card {
+    width: 460px; /* Ensure both cards have the same width */
+    min-height: 550px;
+    border-radius: 15px;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Ensures margin works */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+} 
+
+/* Adjusts Text Formatting Inside Cards */
+.card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 12px; /* Reduced spacing */
+}
+
+/* Adjust paragraph spacing */
+.card p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5; /* Reduce line height for more compact spacing */
+    margin-bottom: 6px; /* Reduce margin below each paragraph */
+}
+
+/* Add spacing control inside the text section */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px; /* Adjust this value for finer control over spacing */
+    margin-bottom: 35px;
+    margin-top: 35px;
+}
+
+/* Dark Blue Project Card */
+.card-dark {
+    background: linear-gradient(to bottom, #002147, #003899); /* Dark Blue Gradient */
+    color: white;
+    border-radius: 15px; /* Matches the given border radius */
+    border: 3px solid rgba(73, 73, 73, 0.19); /* Stroke color with 19% opacity */
+}
+
+/* Light Blue Elevator Card */
+.card-light {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.81) 100%);
+    color: #002147;
+    border-radius: 15px;
+}
+
+/* Remove space distribution causing extra gaps */
+.card-dark,
+.card-light {
+    padding: 50px 40px;  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Centering Text & Button */
+.card-dark h2,
+.card-light h2 {
+    margin-bottom: 18px; /* More spacing under headings */
+}
+
+.card-dark p,
+.card-light p {
+    text-align: center;
+}
+    
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .card {
+        max-width: 85%; /* Adjust width for smaller screens */
+        min-height: 450px; /* Reduce height slightly */
+    }
+}  
+    
+.btn {
+    background-color: white;
+    color: #002147;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 24px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+    
+.btn-outline {
+    background: transparent;
+    border: 2px solid #002147;
+    color: #002147;
+}
+    
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Toggle Container */
+.toggle-container {
+    position: absolute;
+    top: 45px; /* Adjusts positioning */
+    right: 40px; /* Moves to top-right */
+}
+
+/* Toggle Button Wrapper */
+.toggle {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    height: 46px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.54) 0%, #FFFFFF 100%);
+    border-radius: 50px;
+    padding: 4px; /* Inner spacing */
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    flex: 1;
+    height: 38px;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    color: #003899;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+/* Active Button */
+.toggle-btn.active {
+    background: #002147;
+    color: white;
+}
+
+    
+    
