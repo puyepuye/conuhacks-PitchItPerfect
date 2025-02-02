@@ -1,0 +1,185 @@
+/* Move Logo to the Top-Left Corner */
+.logo-container {
+    position: absolute;
+    top: 32px;  /* Keeps the same top padding */
+    left: 40px;  /* Moves the logo to the left */
+    display: flex;
+    flex-direction: column; /* Stacks logo and text */
+    align-items: center; /* Ensures they remain centered */
+    justify-content: center;
+    text-align: center;
+    gap: 12px; /* Space between logo and text */
+}
+  
+/* Adjust Logo Size */
+.logo {
+    width: 45px; /* Slightly smaller for better alignment */
+    height: auto;
+}
+  
+/* Move "Pitch" Slightly to the Left */
+.logo-text {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 0; /* Reset any previous adjustments */
+}
+
+.toggle-container {
+    position: absolute;
+    top: 45px; /* Adjusts positioning */
+    right: 40px; /* Moves to top-right */
+}
+
+/* Toggle Button Wrapper */
+.toggle {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    height: 46px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.54) 0%, #FFFFFF 100%);
+    border-radius: 50px;
+    padding: 4px; /* Inner spacing */
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    flex: 1;
+    height: 38px;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    color: #003899;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+/* Active Button */
+.toggle-btn.active {
+    background: #002147;
+    color: white;
+}
+
+
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #003899;
+    margin-top: 40px;
+}
+
+.pitch-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 90%; /* Adjust width */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button-container {
+    display: flex;
+    gap: 15px;  /* Adds space between buttons */
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 15px;
+}
+
+.start-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.start-btn:hover {
+    background-color: #0056b3;
+}
+
+.stop-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.stop-btn:hover {
+    background-color: #b02a37;
+}
+
+.transcription {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    margin-top: 20px;
+}
+
+.video-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.webcam-container {
+    position: relative;
+    width: 59vw;  /* Adjust width to 80% of viewport */
+    max-width: 900px; /* Set a max width */
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Optional */
+    overflow: hidden;
+}
+
+.webcam-container video {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+canvas {
+    position: absolute;
+    top: 120;
+    left: 1050;
+}
+
+.pdf-container {
+    /* max-width: 400px; Shrinks width */
+    max-height: 300px; /* Shrinks height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    align-items: flex-start;
+    width: 25%;
+  }
+  
+  .pdf-container canvas {
+    width: 23%;  /* Ensures it does not exceed container width */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+
