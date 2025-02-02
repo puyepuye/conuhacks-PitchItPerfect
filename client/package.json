@@ -27,6 +27,7 @@
     "pitchfinder": "^2.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-loading-skeleton": "^3.5.0",
     "react-pdf": "^9.2.1",
     "react-pdf-js": "^5.1.0",
     "react-webcam": "^7.2.0"
