@@ -22,23 +22,23 @@ const PitchUploader: React.FC = () => {
         height: "100vh",
         background: "linear-gradient(-45deg, #48C5FD 0%, #2A9BF9 21%, #0F75F6 33%, #003899 65%, #01132F 100%)",
         display: "flex",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
-        paddingLeft: "10vw",
+        paddingLeft: "20vw",
+        paddingRight:  "20vw"
       }}
     >
       {/* Main Settings Box */}
       <div
-        style={{
-          width: "70vw",
-          height: "auto",
-          padding: "2rem",
-          borderRadius: "20px",
-          background: "linear-gradient(180deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.55) 100%)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.8rem",
-        }}
+       style={{
+        position: "relative", // Enables absolute positioning inside
+        display: "flex",
+        flexDirection: "column",
+        padding: "2rem",
+        borderRadius: "20px",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.55) 100%)",
+        gap: "0.8rem",
+      }}
       >
         {/* Settings Title */}
         <h2 style={{ color: "#003899", fontSize: "1.8rem", fontWeight: "bold" }}>Settings</h2>
@@ -203,6 +203,27 @@ const PitchUploader: React.FC = () => {
           />
         </div>
       </div>
+{/* Save and Continue Button - Now Sticks to Bottom-Right */}
+<button
+    style={{
+      top: "89vh",
+      position: "fixed", // Sticks inside the settings box
+      padding: "none",
+      borderRadius: "8px",
+      backgroundColor: "#005BBB",
+      color: "white",
+      fontSize: "1rem",
+      fontWeight: "bold",
+      border: "none",
+      cursor: "pointer",
+      transition: "background 0.3s",
+      boxShadow: "0 4px 6px rgba(0, 123, 255, 0.3)",
+    }}
+    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#004899")}
+    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#005BBB")}
+  >
+    Save and Continue
+  </button>
     </div>
   );
 };
