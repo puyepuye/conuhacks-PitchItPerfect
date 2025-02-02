@@ -250,4 +250,3 @@ export default function PitchPage() {
     </div>
   );
 }
-
