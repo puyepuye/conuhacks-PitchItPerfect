@@ -20,8 +20,6 @@
     "node-whisper": "^2024.11.13",
     "openai": "^4.82.0",
     "pitchfinder": "^2.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "react-webcam": "^7.2.0",
     "webgazer": "^3.3.0",
     "fs": "^0.0.1-security",
