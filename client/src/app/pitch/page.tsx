@@ -17,7 +17,9 @@ export default function PitchPage() {
 
   const router = useRouter();
   const handleProjectNavigation = () => {
-    router.push("/summary"); // Change to your desired path
+    router.push(
+      `/summary?filler=${encodeURIComponent(filler)}&fillerNum=${encodeURIComponent(fillerNum)}&sentiment=${encodeURIComponent(sentiment)}&modulation=${encodeURIComponent(modulation)}&articulation=${encodeURIComponent(articulation)}&persuasiveness=${encodeURIComponent(persuasiveness)}}&rubrik=${encodeURIComponent(rubrik)}`
+    );
   };
 
   const [transcription, setTranscription] = useState("");
@@ -42,6 +44,15 @@ const searchParams = useSearchParams();
 const projectName = searchParams.get("projectName");
 const minutes = searchParams.get("minutes");
 const seconds = searchParams.get("seconds");
+
+//params to send
+const [filler, setFiller] = useState("");
+const [fillerNum, setFillerNum] = useState("");
+const [sentiment, setSentiment] = useState("");
+const [modulation, setModulation] = useState("");
+const [articulation, setArticulation] = useState("");
+const [persuasiveness, setPersuasivness] = useState("");
+const [rubrik, setRubrik] = useState(""); //string number seperated by commas
 
 console.log("Project Name:", projectName);
 
@@ -186,7 +197,7 @@ console.log("Project Name:", projectName);
     try {
       console.log("Sending data HERE>>:", JSON.stringify(data));
   
-      const response = await fetch("http://127.0.0.1:5000/api/pitch", { 
+      const response = await fetch("http://127.0.0.1:5000/api/analyze_pitch", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -196,6 +207,16 @@ console.log("Project Name:", projectName);
         console.log("Data successfully sent!");
         const result = await response.json();
         console.log("Server response:", result);
+        
+        // Update state variables with received data
+      setFiller(result.filler_feedback || "");
+      setFillerNum(result.filler_num || "");
+      setSentiment(result.sentiment_feedback || "");
+      setModulation(result.modulation_analysis || "");
+      setArticulation(result.articulation_analysis || "");
+      setPersuasivness(result.persuasiveness_feedback || "");
+      setRubrik(result.rubrik_feedback || ""); 
+        
       } else {
         console.error("Error sending data:", response.statusText);
       }
