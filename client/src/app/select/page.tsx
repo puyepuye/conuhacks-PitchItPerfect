@@ -1,9 +1,19 @@
+"use client"; 
+
 import Link from "next/link";
 import Image from "next/image";
 import "./select.css"; // Import the updated styles
+import { useRouter } from "next/navigation";
+
 
 export default function SelectPage() {
+  const router = useRouter();
+  const handleProjectNavigation = () => {
+    router.push("/settings"); // Change to your desired path
+  };
+  
   return (
+
     <div className="select-container">
       {/* Logo in the Top-Left */}
       <div className="logo-container">
@@ -33,7 +43,7 @@ export default function SelectPage() {
             <p>Build your confidence</p>
             <p>Learn your strengths and weaknesses</p>
           </div>
-          <button className="btn">Get Started →</button>
+          <button className="btn" onClick={handleProjectNavigation}>Get Started →</button>
         </div>
 
         <div className="card card-light">

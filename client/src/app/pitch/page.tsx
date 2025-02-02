@@ -181,7 +181,7 @@ export default function PitchPage() {
         <Webcam ref={webcamRef} audio={false} onPlay={handleVideoOnPlay} />
         <canvas ref={canvasRef} />
       </div>
-      {/* <PdfJs src="/uploads/local-attempt.pdf" />  */}
+      <PdfJs src="/uploads/local-attempt.pdf" /> 
     </div>
   );
 }
