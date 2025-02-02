@@ -1,0 +1,7 @@
+"filler_feedback": filler_feedback,
+                "filler_data": filler_data,
+                "sentiment_feedback": sentiment_feedback,
+                "modulation_analysis": modulation_analysis,
+                "articulation_analysis": articulation_analysis,
+                "persuasiveness_feedback": persuasiveness_feedback,
+                "rubric_feedback": rubric_feedback,

@@ -10,10 +10,11 @@ import google.generativeai as genai
 
 # Load NLP models
 nlp = spacy.load("en_core_web_sm")
-nltk.download('vader_lexicon')
-nltk.download('punkt')
+nltk.download("vader_lexicon")
+nltk.download("punkt")
 
 # Functions for analysis (same as in your code above)
+
 
 def analyze_filler_words(text):
     filler_words = ["um", "like", "you know", "so", "uh", "yeah", "maybe"]
@@ -21,9 +22,10 @@ def analyze_filler_words(text):
     fillers_used = [word for word in words if word.lower() in filler_words]
     return {"filler_words": fillers_used, "count": len(fillers_used)}
 
+
 def generate_filler_feedback(filler_data):
-    filler_words_count = filler_data['count']
-    filler_words = filler_data['filler_words']
+    filler_words_count = filler_data["count"]
+    filler_words = filler_data["filler_words"]
     filler_feedback = ""
 
     if filler_words_count > 3:
@@ -34,6 +36,7 @@ def generate_filler_feedback(filler_data):
         filler_feedback = "Great job! You didn't use any filler words."
 
     return filler_feedback
+
 
 def analyze_sentiment(text, context="enthusiastic"):
     sia = SentimentIntensityAnalyzer()
@@ -75,6 +78,7 @@ def analyze_sentiment(text, context="enthusiastic"):
         else:
             return f"Your tone is appropriately balanced for a formal context. Keep up the good work maintaining professionalism with subtle enthusiasm. (Formality Score: {combined_score:.2f})"
 
+
 def analyze_modulation(pitch_data, volume_data):
     pitch_variation = np.std(pitch_data)
     if pitch_variation < 1.0:
@@ -88,13 +92,18 @@ def analyze_modulation(pitch_data, volume_data):
     else:
         volume_analysis = "Well done on varying your volume."
 
-    pacing = np.mean(np.diff(np.array(pitch_data))) + np.mean(np.diff(np.array(volume_data)))
+    pacing = np.mean(np.diff(np.array(pitch_data))) + np.mean(
+        np.diff(np.array(volume_data))
+    )
     if pacing < 0.5:
-        pacing_analysis = "Your pacing may be too rushed or slow. Aim for a more consistent rhythm."
+        pacing_analysis = (
+            "Your pacing may be too rushed or slow. Aim for a more consistent rhythm."
+        )
     else:
         pacing_analysis = "Your pacing is well-balanced."
 
-    return pitch_analysis + ' '+ volume_analysis + ' ' + pacing_analysis
+    return pitch_analysis + " " + volume_analysis + " " + pacing_analysis
+
 
 def analyze_modulation_with_articulation(pitch_data, volume_data, words):
     """
@@ -110,30 +119,43 @@ def analyze_modulation_with_articulation(pitch_data, volume_data, words):
     - dict: Contains analysis feedback for modulation, articulation, and context-specific criteria.
     """
     # Check if the inputs are valid
-    if len(pitch_data) == 0 or len(volume_data) == 0 or len(words) == 0 or len(pitch_data) != len(volume_data) != len(words):
-        return {"error": "Invalid input data. Ensure pitch, volume, and words data are of the same length."}
+    if (
+        len(pitch_data) == 0
+        or len(volume_data) == 0
+        or len(words) == 0
+        or len(pitch_data) != len(volume_data) != len(words)
+    ):
+        return {
+            "error": "Invalid input data. Ensure pitch, volume, and words data are of the same length."
+        }
 
     # Load spaCy model for NLP tasks (use the en_core_web_sm model or a custom model if needed)
     nlp = spacy.load("en_core_web_sm")
-    sentence = ' '.join(words)
+    sentence = " ".join(words)
     # Process the text with spaCy to identify key emphasis words (nouns, verbs, adjectives)
     doc = nlp(sentence)
 
     # Extract key emphasis words
     emphasized_words = []
     for token in doc:
-        if token.pos_ in ['NOUN', 'VERB', 'ADJ']:  # Focus on nouns, verbs, and adjectives NLP Based contextual emphasis
+        if token.pos_ in [
+            "NOUN",
+            "VERB",
+            "ADJ",
+        ]:  # Focus on nouns, verbs, and adjectives NLP Based contextual emphasis
             emphasized_words.append(token.text)
 
     articulation_feedback = {
         "needs_emphasis": [],
         "well_emphasized": [],
-        "no_emphasis": []
+        "no_emphasis": [],
     }
 
     for i, word in enumerate(words):
         if word.lower() in emphasized_words:
-            if volume_data[i] < np.mean(volume_data) or pitch_data[i] < np.mean(pitch_data):
+            if volume_data[i] < np.mean(volume_data) or pitch_data[i] < np.mean(
+                pitch_data
+            ):
                 articulation_feedback["needs_emphasis"].append(word)
             else:
                 articulation_feedback["well_emphasized"].append(word)
@@ -143,20 +165,27 @@ def analyze_modulation_with_articulation(pitch_data, volume_data, words):
     articulation_feedback_text = []
 
     if articulation_feedback["needs_emphasis"]:
-        articulation_feedback_text.append(f"The word(s) [{', '.join(articulation_feedback['needs_emphasis'])}] need to be more emphasized. Increasing the pitch or volume will make them stand out more clearly.")
-    
+        articulation_feedback_text.append(
+            f"The word(s) [{', '.join(articulation_feedback['needs_emphasis'])}] need to be more emphasized. Increasing the pitch or volume will make them stand out more clearly."
+        )
+
     if articulation_feedback["well_emphasized"]:
-        articulation_feedback_text.append(f"The word(s) [{', '.join(articulation_feedback['well_emphasized'])}] are emphasized well. This adds to the impact of your message.")
-    
+        articulation_feedback_text.append(
+            f"The word(s) [{', '.join(articulation_feedback['well_emphasized'])}] are emphasized well. This adds to the impact of your message."
+        )
+
     if articulation_feedback["no_emphasis"]:
-        articulation_feedback_text.append(f"The word(s) [{', '.join(articulation_feedback['no_emphasis'])}] do not need emphasis. Keeping the focus on key words helps avoid over-emphasis and maintains clarity.")
+        articulation_feedback_text.append(
+            f"The word(s) [{', '.join(articulation_feedback['no_emphasis'])}] do not need emphasis. Keeping the focus on key words helps avoid over-emphasis and maintains clarity."
+        )
 
     # Return the analysis results
     return articulation_feedback_text
 
+
 def analyze_filler_feedback(filler_data):
-    filler_words_count = filler_data['count']
-    filler_words = filler_data['filler_words']
+    filler_words_count = filler_data["count"]
+    filler_words = filler_data["filler_words"]
     filler_feedback = ""
 
     if filler_words_count > 3:
@@ -168,16 +197,37 @@ def analyze_filler_feedback(filler_data):
 
     return filler_feedback
 
+
 def is_persuasive(text, context):
     try:
-        genai.configure(api_key="")
-        model = genai.GenerativeModel("gemini-1.5-flash")  # Use "gemini-1.5-flash" for a faster/cheaper option
+        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        model = genai.GenerativeModel(
+            "gemini-1.5-flash"
+        )  # Use "gemini-1.5-flash" for a faster/cheaper option
         response = model.generate_content(
             f"Evaluate the persuasiveness of the following text based on the given context:\n\n"
             f"Context: {context}\n\nText: {text}\n\n"
             f"Is the text persuasive? Why or why not? Provide a concise explanation."
         )
         return response.text.strip()  # Extract response text
-    
+
+    except Exception as e:
+        return str(e)
+
+
+def rubric(text):
+    try:
+        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        model = genai.GenerativeModel(
+            "gemini-1.5-flash"
+        )  # Use "gemini-1.5-flash" for a faster/cheaper option
+        response = model.generate_content(
+            f"Evaluate the following presentation or pitch based on four key categories: Clarity & Organization (30%), Persuasiveness & Effectiveness (50%), Confidence & Delivery (10%), and Passion & Engagement (10%).\n\n"
+            f"For each category, provide: A score from 1 to 5 (5 = excellent, 1 = poor), Return 4 numbers from 1-4 in order of the categories separated by comma. Nothing else.\n\n"
+            f"Text: {text}\n\n"
+        )
+        print(response.text.strip())
+        return response.text.strip()  # Extract response text
+
     except Exception as e:
         return str(e)
