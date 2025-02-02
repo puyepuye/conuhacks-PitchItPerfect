@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from functions import *
+from app.functions import *
 
 def register_routes(app):
     @app.route("/")
@@ -28,54 +28,41 @@ def register_routes(app):
             }
         ), 200
     
-    @app.route('/analyze_filler_words', methods=['POST'])
-    def analyze_filler_words_route():
+    @app.route('/api/analyze_all', methods=['POST'])
+    def analyze_all_route():
         data = request.get_json()
-        text = data.get("text", "")
-        filler_data = analyze_filler_words(text)
-        feedback = generate_filler_feedback(filler_data)
-        return jsonify({"filler_feedback": feedback})
+        
+        if not data:
+            return jsonify({"error": "Invalid JSON data"}), 400
 
-    @app.route('/analyze_sentiment', methods=['POST'])
-    def analyze_sentiment_route():
-        data = request.get_json()
+        # Filler words analysis
         text = data.get("text", "")
+        filler_feedback = None
+        if text:
+            filler_data = analyze_filler_words(text)
+            filler_feedback = generate_filler_feedback(filler_data)
+
+        # Sentiment analysis
         context = data.get("context", "enthusiastic")
-        feedback = analyze_sentiment(text, context)
-        return jsonify({"sentiment_feedback": feedback})
+        sentiment_feedback = analyze_sentiment(text, context)
 
-    @app.route('/analyze_modulation', methods=['POST'])
-    def analyze_modulation_route():
-        data = request.get_json()
+        # Modulation analysis
         pitch_data = data.get("pitch_data", [])
         volume_data = data.get("volume_data", [])
-        feedback = analyze_modulation(pitch_data, volume_data)
-        return jsonify({"modulation_feedback": feedback})
-    
-    @app.route('/analyze_modulation', methods=['POST'])
-    def analyze_modulation_with_articulation_route():
-        # Get the JSON data sent by the React client
-        data = request.get_json()
+        modulation_analysis = analyze_modulation(pitch_data, volume_data)
 
-        pitch_data = data.get('pitch_data')
-        volume_data = data.get('volume_data')
-        words = data.get('words')
-        context = data.get('context')
+        # Modulation with articulation analysis
+        words = data.get("words", [])
+        articulation_analysis = analyze_modulation_with_articulation(pitch_data, volume_data, words)
 
-        # Check if all data is present
-        if not all([pitch_data, volume_data, words, context]):
-            return jsonify({"error": "Missing data."}), 400
+        # Persuasiveness analysis
+        persuasiveness_feedback = is_persuasive(text, context)
 
-        # Call the analyze_modulation_with_articulation function
-        result = analyze_modulation_with_articulation(pitch_data, volume_data, words, context)
-        
-        # Return the result as a JSON response
-        return jsonify({"modulation_feedback": result})
-
-    @app.route('/is_persuasive', methods=['POST'])
-    def is_persuasive_route():
-        data = request.get_json()
-        text = data.get("text", "")
-        context = data.get("context", "")
-        feedback = is_persuasive(text, context)
-        return jsonify({"persuasiveness_feedback": feedback})
+        # Return all analysis results in a single response
+        return jsonify({
+            "filler_feedback": filler_feedback,
+            "sentiment_feedback": sentiment_feedback,
+            "modulation_analysis": modulation_analysis,
+            "articulation_analysis": articulation_analysis,
+            "persuasiveness_feedback": persuasiveness_feedback
+        })
