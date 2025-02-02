@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
-import { promisify } from "util";
-
-const writeFile = promisify(fs.writeFile);
-const mkdir = promisify(fs.mkdir);
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,13 +17,11 @@ export async function POST(req: NextRequest) {
 
     // Ensure the uploads directory exists
     const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    await fs.mkdir(uploadDir, { recursive: true });
 
     // Save as `local-attempt.pdf` (overwrite previous file)
     const filePath = path.join(uploadDir, "local-attempt.pdf");
-    await writeFile(filePath, buffer);
+    await fs.writeFile(filePath, buffer);
 
     // Return the static file URL
     const fileUrl = `/uploads/local-attempt.pdf`;

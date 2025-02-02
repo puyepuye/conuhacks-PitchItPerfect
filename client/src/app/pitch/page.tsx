@@ -6,10 +6,20 @@ import * as faceapi from "@vladmandic/face-api";
 import Pitchfinder from "pitchfinder";
 import PdfJs from "@/components/PdfJs";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import CountdownTimer from "@/components/countdownTimer"; // Import the countdown timer component
+
 
 import "./pitch.css";
 
 export default function PitchPage() {
+
+  const router = useRouter();
+  const handleProjectNavigation = () => {
+    router.push("/summary"); // Change to your desired path
+  };
+
   const [transcription, setTranscription] = useState("");
   const [recording, setRecording] = useState(false);
   const [pitchData, setPitchData] = useState([]);
@@ -23,6 +33,18 @@ export default function PitchPage() {
   const recognitionRef = useRef(null);
   const intervalRef = useRef(null);
   const detectEmotionRef = useRef(false);
+
+  const [timerStarted, setTimerStarted] = useState(false);
+
+  const [stoppedRecord, setStoppedRecord] = useState(false);
+
+const searchParams = useSearchParams();
+const projectName = searchParams.get("projectName");
+const minutes = searchParams.get("minutes");
+const seconds = searchParams.get("seconds");
+
+console.log("Project Name:", projectName);
+
 
   const loadModels = async () => {
     const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights';
@@ -79,7 +101,6 @@ export default function PitchPage() {
   };
 
   const handleVideoOnPlay = () => {
-    console.log("PEEEEEEE");
     setInterval(async () => {
       if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
         const video = webcamRef.current.video;
@@ -126,6 +147,7 @@ export default function PitchPage() {
     setEmotionData([]);
     setTranscription("");
     setRecording(true);
+    setTimerStarted(true);
     detectEmotionRef.current = true; 
   
     initAudio();
@@ -186,6 +208,7 @@ export default function PitchPage() {
   const stopRecording = () => {
     recognitionRef.current?.stop();
     setRecording(false);
+    setStoppedRecord(true);
     console.log("STOP RECORD EMOTION", detectEmotionRef.current);
     detectEmotionRef.current = false; 
     if (intervalRef.current) {
@@ -212,7 +235,7 @@ export default function PitchPage() {
         <div className="container">
 
           <div className="pdf-container">
-            <PdfJs src="/uploads/local-attempt.pdf" />
+            <PdfJs src="uploads/local-attempt.pdf" />
           </div>
 
 
@@ -220,7 +243,7 @@ export default function PitchPage() {
             <div className="button-container">
             <button
               onClick={startRecording}
-              disabled={recording}
+              disabled={recording || stoppedRecord}
               className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
             >
               {recording ? "Recording..." : "Start Recording"}
@@ -234,8 +257,15 @@ export default function PitchPage() {
             </button>
             </div>
 
-            {/* <h2 className="mt-4 font-semibold">Transcription:</h2>
-            <p className="text-lg">{transcription}</p> */}
+      
+             {/* Countdown Timer - Starts when recording starts, stops when recording stops */}
+             <CountdownTimer 
+              minutes={minutes} 
+              seconds={seconds} 
+              start={recording} 
+              stop={!recording}
+              onFinish={() => stopRecording()} 
+            />
 
             <div className="video-container">
               <div className="webcam-container">
@@ -246,6 +276,14 @@ export default function PitchPage() {
           </div>
         </div>
       </div>
+
+      <button className="view-feedback-btn" onClick={handleProjectNavigation}>
+      <span>View Feedback</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+      </button>
+
       
     </div>
   );
