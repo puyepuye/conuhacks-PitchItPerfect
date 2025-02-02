@@ -294,6 +294,7 @@ console.log("Project Name:", projectName);
                 <canvas ref={canvasRef} />
               </div>
             </div>
+            <p className="text-lg">{transcription}</p>
           </div>
         </div>
       </div>
