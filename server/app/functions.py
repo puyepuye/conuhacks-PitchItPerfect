@@ -200,7 +200,7 @@ def analyze_filler_feedback(filler_data):
 
 def is_persuasive(text, context):
     try:
-        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        genai.configure(api_key="")
         model = genai.GenerativeModel(
             "gemini-1.5-flash"
         )  # Use "gemini-1.5-flash" for a faster/cheaper option
@@ -217,7 +217,7 @@ def is_persuasive(text, context):
 
 def rubric(text):
     try:
-        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        genai.configure(api_key="")
         model = genai.GenerativeModel(
             "gemini-1.5-flash"
         )  # Use "gemini-1.5-flash" for a faster/cheaper option
