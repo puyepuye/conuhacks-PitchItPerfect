@@ -1,5 +1,5 @@
 from flask import jsonify, request
-
+from functions import *
 
 def register_routes(app):
     @app.route("/")
