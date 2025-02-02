@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 
 export default function SelectPage() {
   const router = useRouter();
+
   const handleProjectNavigation = () => {
-    router.push("/pitch"); // Change to your desired path
+    router.push("/pitch"); 
   };
 
   return <PitchUploader handleProjectNavigation={handleProjectNavigation} />;
