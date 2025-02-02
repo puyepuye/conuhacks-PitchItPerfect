@@ -65,14 +65,15 @@ const PdfJs: React.FC<PdfJsProps> = ({ src }) => {
   }, [pdfDoc, currentPage, renderPage]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex gap-4 mb-2">
+    <div style={{ flexDirection: "column" }}>
+
+      <div style={{ display: "flex", gap: "10px" }}>
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage <= 1}
           className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
         >
-          Previous
+          Prev
         </button>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, numPages))}

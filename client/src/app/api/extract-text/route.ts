@@ -22,25 +22,39 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Define a temporary file path
-    const tempFilePath = path.join("/tmp", `uploaded-${Date.now()}.pdf`);
+    // Define paths
+    const uploadsDir = path.join(process.cwd(), "public/uploads");
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
 
-    // Write the file to the server
-    await writeFile(tempFilePath, buffer);
+    // Define paths for PDF and extracted text
+    const tempPdfPath = path.join(uploadsDir, `local-attempt.pdf`);
+    const extractedTxtPath = tempPdfPath.replace(".pdf", ".txt");
 
-    // Extract text page by page
+    // Write the PDF file to the server
+    await writeFile(tempPdfPath, buffer);
+
+    // Extract text from PDF
     const pages: string[] = await new Promise((resolve, reject) => {
-      extract(tempFilePath, { splitPages: true }, (err, pages) => {
+      extract(tempPdfPath, { splitPages: true }, (err, pages) => {
         if (err) return reject(err);
         resolve(pages);
       });
     });
 
-    // Clean up: Delete the temporary file
-    await unlink(tempFilePath);
+    // Combine text into one string
+    const extractedText = pages.join("\n\n");
 
-    // Structure response with each page's text stored separately
-    return NextResponse.json({ pages });
+    // Save extracted text to a .txt file
+    await writeFile(extractedTxtPath, extractedText, "utf-8");
+
+    // Return the path of the extracted text file
+    return NextResponse.json({ 
+      message: "Text extracted successfully", 
+      textFilePath: `/uploads/${path.basename(extractedTxtPath)}`,
+      textContent: extractedText, 
+    });
   } catch (error) {
     console.error("Error extracting PDF text:", error);
     return NextResponse.json({ error: "Error extracting PDF text" }, { status: 500 });

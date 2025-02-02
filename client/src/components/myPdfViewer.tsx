@@ -28,7 +28,7 @@ const MyPdfViewer = () => {
           onClick={() => setPageNumber(pageNumber - 1)}
           className="mx-2 px-4 py-2 bg-gray-300 rounded"
         >
-          Previous
+          Prev
         </button>
         <button
           disabled={pageNumber >= numPages}
