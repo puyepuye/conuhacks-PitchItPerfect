@@ -6,10 +6,17 @@ import * as faceapi from "@vladmandic/face-api";
 import Pitchfinder from "pitchfinder";
 import PdfJs from "@/components/PdfJs";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import "./pitch.css";
 
 export default function PitchPage() {
+
+  const router = useRouter();
+  const handleProjectNavigation = () => {
+    router.push("/summary"); // Change to your desired path
+  };
+
   const [transcription, setTranscription] = useState("");
   const [recording, setRecording] = useState(false);
   const [pitchData, setPitchData] = useState([]);
@@ -246,6 +253,14 @@ export default function PitchPage() {
           </div>
         </div>
       </div>
+
+      <button className="view-feedback-btn" onClick={handleProjectNavigation}>
+      <span>View Feedback</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+      </button>
+
       
     </div>
   );

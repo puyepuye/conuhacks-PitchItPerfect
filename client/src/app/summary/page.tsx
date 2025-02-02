@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import "./settings.css"; // Import the updated styles
+import "./summary.css"; // Import the updated styles
 import Image from "next/image";
 
 const PitchUploader: React.FC = () => {
@@ -102,32 +102,24 @@ const PitchUploader: React.FC = () => {
   }, [gazeData]); // ✅ Only depends on `gazeData`
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "0 20vw",
-      }}
-    >
-      {/* 🏠 Main Box */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "2rem",
-          borderRadius: "20px",
-          background: "linear-gradient(270deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 100%)",
-          gap: "1rem",
-          width: "80%",
-          maxWidth: "900px",
-        }}
-      >
+    <div className="summary-container">
+    <h1 className="summary-title">Performance Summary</h1>
+
+    <div className="summary-box">
+
+      <div className="logo-container">
+          <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
+          <span className="logo-text">Pitch</span>
+      </div>
+      
+      {/* Navigation Buttons */}
+      <div className="toggle-container">
+      <div className="toggle">
+          <button className="toggle-btn active">Practice</button>
+          <button className="toggle-btn">Profile</button>
+      </div>
+      </div>
+
         {/* 📌 Volume & Gaze Control */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           {/* Volume Control Graph */}
@@ -148,11 +140,9 @@ const PitchUploader: React.FC = () => {
         </div>
 
         {/* ✅ Feedback & Overall Tone */}
+        <div className="toneYay">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 style={{ color: "#FFFFFF", fontSize: "1.8rem", fontWeight: "bold", margin: 0 }}>
-            Feedback
-          </h2>
-          <div
+          <div 
             style={{
               display: "flex",
               alignItems: "center",
@@ -168,16 +158,33 @@ const PitchUploader: React.FC = () => {
             </span>
           </div>
         </div>
+        </div>
+
+        <div className="metrics-container">
+          <div className="metric-item">Filler Word Count</div>
+          <div className="metric-value">52</div>
+
+          <div className="metric-item">Time Taken</div>
+          <div className="metric-value">52</div>
+        </div>
+
 
         {/* ✅ Feedback Box & Stats */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
-          <div className="scroll-box">
-            <p>Apple Banana Cat Duck Elephant France Gorilla Horse...</p>
+        <div className="feedback-container">
+        <h3 className="feedback-title">Feedback</h3>
+          <div className="feedback-box">
+            <p> study by Zhou (2018) investigated gender differences between personality traits and
+              different forms of procrastination. Zhou distinguished between passive procrastination and
+              active procrastination. Passive procrastinators are considered lazy and postpone their tasks
+              because of an inability to act in a timely and regulatory manner, while active procrastinators
+              intentionally procrastinate so they can work with a strong motivation of time pressure. It was
+              hypothesized that conscientiousness, extraversion, and emotional instability were associated
+              with passive procrastination, while all Big Five personality traits were associated with active
+              procrastination. Furthermore, it was hypothesized that the relationship between personality
+            </p>
           </div>
-          <div>
-            <p>Filler Word Count: <b>52</b></p>
-            <p>Time Taken: <b>52</b></p>
-          </div>
+        </div>
         </div>
       </div>
     </div>

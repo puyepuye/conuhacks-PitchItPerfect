@@ -183,3 +183,40 @@ canvas {
   }
   
 
+/* View Feedback Button */
+.view-feedback-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #005BBB, #003899); /* Your color scheme */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    width: 220px;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+    position: fixed;
+    bottom: 5vh; /* Aligns with webcam */
+    right: 40px;
+}
+
+/* Hover Effect */
+.view-feedback-btn:hover {
+    background: #004899;
+}
+
+/* Arrow Icon Styling */
+.view-feedback-btn svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s;
+    margin-left: 10px;
+}
+
+.view-feedback-btn:hover svg {
+    transform: translateX(5px); /* Moves arrow slightly when hovered */
+}
