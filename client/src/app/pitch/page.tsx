@@ -4,6 +4,10 @@ import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "@vladmandic/face-api";
 import Pitchfinder from "pitchfinder";
+import PdfJs from "@/components/PdfJs";
+import Image from "next/image";
+
+import "./pitch.css";
 
 export default function PitchPage() {
   const [transcription, setTranscription] = useState("");
@@ -71,6 +75,7 @@ export default function PitchPage() {
     } else {
       alert("Your browser does not support the Web Speech API");
     }
+
   };
 
   const handleVideoOnPlay = () => {
@@ -191,43 +196,57 @@ export default function PitchPage() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Pitch It Perfect</h1>
-      <button
-        onClick={startRecording}
-        disabled={recording}
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-      >
-        {recording ? "Recording..." : "Start Recording"}
-      </button>
-      <button
-        onClick={stopRecording}
-        disabled={!recording}
-        className="bg-red-500 text-white px-4 py-2 rounded mt-4"
-      >
-        Stop Recording
-      </button>
-      <h2 className="mt-4 font-semibold">Transcription:</h2>
-      <p className="text-lg">{transcription}</p>
-      <h2 className="mt-4 font-semibold">Current Pitch: {pitchData[pitchData.length - 1]?.toFixed(2)} Hz</h2>
-      <h2 className="mt-4 font-semibold">Current Volume: {volumeData[volumeData.length - 1]?.toFixed(2)}</h2>
-      <h2 className="mt-4 font-semibold">Current Emotion: {emotionData[emotionData.length - 1]? emotionData.length > 0 : ""}</h2>
-      <div style={{ position: "relative" }}>
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          style={{ width: 640, height: 480 }}
-        />
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 640,
-            height: 480,
-          }}
-        />
+      <div className="logo-container">
+                  <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
+                  <span className="logo-text">Pitch</span>
+                </div>
+      
+                <div className="toggle-container">
+                  <div className="toggle">
+                    <button className="toggle-btn active">Practice</button>
+                    <button className="toggle-btn">Profile</button>
+                  </div>
+                </div>
+
+      <div className="pitch-container">
+        <div className="container">
+
+          <div className="pdf-container">
+            <PdfJs src="/uploads/local-attempt.pdf" />
+          </div>
+
+
+          <div className="right-section">
+            <div className="button-container">
+            <button
+              onClick={startRecording}
+              disabled={recording}
+              className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+            >
+              {recording ? "Recording..." : "Start Recording"}
+            </button>
+            <button
+              onClick={stopRecording}
+              disabled={!recording}
+              className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+            >
+              Stop Recording
+            </button>
+            </div>
+
+            {/* <h2 className="mt-4 font-semibold">Transcription:</h2>
+            <p className="text-lg">{transcription}</p> */}
+
+            <div className="video-container">
+              <div className="webcam-container">
+                <Webcam ref={webcamRef} audio={false} onPlay={handleVideoOnPlay} />
+                <canvas ref={canvasRef} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      
     </div>
   );
 }
