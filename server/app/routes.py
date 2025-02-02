@@ -1,5 +1,14 @@
 from flask import jsonify, request
-from app.functions import *
+from app.functions import (
+    analyze_filler_words,
+    generate_filler_feedback,
+    analyze_sentiment,
+    analyze_modulation,
+    analyze_modulation_with_articulation,
+    is_persuasive,
+    rubric,
+)
+
 
 def register_routes(app):
     @app.route("/")
@@ -27,11 +36,11 @@ def register_routes(app):
                 "received_emotions": emotions,
             }
         ), 200
-    
-    @app.route('/api/analyze_all', methods=['POST'])
+
+    @app.route("/api/analyze_all", methods=["POST"])
     def analyze_all_route():
         data = request.get_json()
-        
+
         if not data:
             return jsonify({"error": "Invalid JSON data"}), 400
 
@@ -53,16 +62,70 @@ def register_routes(app):
 
         # Modulation with articulation analysis
         words = data.get("words", [])
-        articulation_analysis = analyze_modulation_with_articulation(pitch_data, volume_data, words)
+        articulation_analysis = analyze_modulation_with_articulation(
+            pitch_data, volume_data, words
+        )
 
         # Persuasiveness analysis
         persuasiveness_feedback = is_persuasive(text, context)
 
         # Return all analysis results in a single response
-        return jsonify({
-            "filler_feedback": filler_feedback,
-            "sentiment_feedback": sentiment_feedback,
-            "modulation_analysis": modulation_analysis,
-            "articulation_analysis": articulation_analysis,
-            "persuasiveness_feedback": persuasiveness_feedback
-        })
+        return jsonify(
+            {
+                "filler_feedback": filler_feedback,
+                "filler_data": filler_data,
+                "sentiment_feedback": sentiment_feedback,
+                "modulation_analysis": modulation_analysis,
+                "articulation_analysis": articulation_analysis,
+                "persuasiveness_feedback": persuasiveness_feedback,
+            }
+        )
+
+    # 🛠 Combined Route: Receives pitch data & analyzes all aspects
+    @app.route("/api/analyze_pitch", methods=["POST"])
+    def analyze_pitch():
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Invalid JSON data"}), 400
+
+        # Filler words analysis
+        text = data.get("text", "")
+        filler_feedback = None
+        if text:
+            filler_data = analyze_filler_words(text)
+            filler_feedback = generate_filler_feedback(filler_data)
+
+        # Sentiment analysis
+        context = data.get("context", "enthusiastic")
+        sentiment_feedback = analyze_sentiment(text, context)
+
+        # Modulation analysis
+        pitch_data = data.get("pitch_data", [])
+        volume_data = data.get("volume_data", [])
+        modulation_analysis = analyze_modulation(pitch_data, volume_data)
+
+        # Modulation with articulation analysis
+        words = data.get("words", [])
+        articulation_analysis = analyze_modulation_with_articulation(
+            pitch_data, volume_data, words
+        )
+
+        # Persuasiveness analysis
+        persuasiveness_feedback = is_persuasive(text, context)
+
+        # Rubric evaluation
+        rubric_feedback = rubric(text)
+
+        # Return all results in one response
+        return jsonify(
+            {
+                "filler_feedback": filler_feedback,
+                "filler_data": filler_data,
+                "sentiment_feedback": sentiment_feedback,
+                "modulation_analysis": modulation_analysis,
+                "articulation_analysis": articulation_analysis,
+                "persuasiveness_feedback": persuasiveness_feedback,
+                "rubric_feedback": rubric_feedback,
+            }
+        ), 200
