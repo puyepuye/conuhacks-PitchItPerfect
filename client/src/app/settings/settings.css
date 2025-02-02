@@ -61,3 +61,74 @@
     background: #002147;
     color: white;
 }
+
+.upload-slides {
+    background: rgba(255, 255, 255, 0.3); /* Matches other sections */
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px; /* Ensures a fixed width */
+    height: 140px; /* Fixed height to match design */
+  }
+  
+  .upload-slides h2 {
+    color: #003899;
+    font-size: 1.2rem;
+    font-weight: bold;
+    white-space: nowrap; /* Prevents wrapping */
+  }
+  
+  .upload-slides .upload-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .upload-slides input[type="file"] {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: white;
+    font-size: 1rem;
+    outline: none;
+    color: black;
+    flex-grow: 1; /* Makes the input field expand */
+  }
+  
+  .upload-slides button {
+    padding: 13px 15px;
+    border-radius: 8px;
+    background-color: #005BBB;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+    width: 100%;
+    margin-top: 21;
+  }
+  
+  .upload-slides button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .upload-slides button:hover {
+    background-color: #004899;
+  }
+
+  .mt-2 h3 {
+    color: #666;
+  }
+
+  .mt-2 p {
+    color: #666;
+  }
+  

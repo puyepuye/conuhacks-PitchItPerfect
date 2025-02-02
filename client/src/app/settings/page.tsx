@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MyPdfViewer } from "@/components/ui/PdfViewer";
+
 import "./settings.css"; // Import the updated styles
+import Image from "next/image";
 
 const PdfTextExtractor: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -117,7 +119,7 @@ console.log(isExtracted);
         >
 
           <div className="logo-container">
-            {/* <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/> */}
+            <Image src="/icons/pitchlogo.svg" alt="Pitch Logo" width={50} height={50} className="logo"/>
             <span className="logo-text">Pitch</span>
           </div>
 
@@ -199,7 +201,6 @@ console.log(isExtracted);
               </div>
               {/* Dropdowns for Minutes & Seconds */}
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <select
                   value={minutes}
                   onChange={(e) => setMinutes(e.target.value)}
@@ -234,7 +235,6 @@ console.log(isExtracted);
                 </select>
                 <span style={{ color: "#666", fontSize: "0.9rem", marginTop: "5px" }}>Seconds</span>
 
-                </div>
               </div>
             </div>
 
@@ -278,9 +278,12 @@ console.log(isExtracted);
             </div>
 
              {/* Pitching Slides Section */}
+             <div className="upload-slides">
+             <div className="upload-container">
                 <div className="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md space-y-4">
-                <h2 className="text-xl font-bold">Upload a PDF</h2>
+                <h2>Upload a PDF</h2>
                 <Input type="file" accept="application/pdf" onChange={handleFileChange} />
+                </div>
                 <Button onClick={exText} disabled={!file} >
                   Save & Extract Words
                 </Button>
@@ -294,7 +297,8 @@ console.log(isExtracted);
                 )}
               </div>
           </div>
-
+          </div>
+                  
      <button
         style={{
           top: "89vh",
