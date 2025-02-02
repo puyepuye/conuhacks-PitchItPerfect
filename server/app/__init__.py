@@ -1,15 +1,16 @@
 # app/__init__.py
 from flask import Flask
+from flask_cors import CORS
 
 
 def create_app():
     app = Flask(__name__)
-    app.config["DEBUG"] = True
 
-    # Import routes to register endpoints.
-    from . import routes
+    # Enable CORS globally
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
-    # If not using blueprints, ensure routes are registered (e.g., via function calls)
-    routes.register_routes(app)
+    from .routes import register_routes
+
+    register_routes(app)
 
     return app

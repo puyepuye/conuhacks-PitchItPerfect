@@ -12,7 +12,7 @@ services:
   server:
     build: ./server
     ports:
-      - "5001:5000"
+      - "5000:5000"
     volumes:
       - ./server:/app # Mounts your server directory into /app in the container
     environment:

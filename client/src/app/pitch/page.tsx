@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "@vladmandic/face-api";
 import Pitchfinder from "pitchfinder";
@@ -8,154 +8,135 @@ import Pitchfinder from "pitchfinder";
 export default function PitchPage() {
   const [transcription, setTranscription] = useState("");
   const [recording, setRecording] = useState(false);
-  const [recognition, setRecognition] = useState(null);
-  const [pitch, setPitch] = useState(null);
+  const [pitchData, setPitchData] = useState([]);
+  const [volumeData, setVolumeData] = useState([]);
+  const [emotionData, setEmotionData] = useState([]);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const microphoneRef = useRef(null);
-  const scriptProcessorRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const intervalRef = useRef(null);
 
-  useEffect(() => {
-    // Load face-api models
-    const loadModels = async () => {
-      const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights';
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-      ]);
-    };
+  const loadModels = async () => {
+    const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights';
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+    ]);
+  };
 
-    loadModels();
+  const initAudio = async () => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const microphone = audioContext.createMediaStreamSource(stream);
+      microphone.connect(analyser);
 
-    // Check for browser support for Web Speech API
+      audioContextRef.current = audioContext;
+      analyserRef.current = analyser;
+      microphoneRef.current = microphone;
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+    }
+  };
+
+  const initSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
-      const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = true;
-      recognitionInstance.interimResults = true;
-      recognitionInstance.lang = "en-US";
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
 
-      recognitionInstance.onresult = (event) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
-        }
-        setTranscription(transcript);
+      let incrementedTranscription = "";
+      recognition.onresult = (event) => {
+        const lastResult = event.results[event.results.length - 1][0].transcript;
+        incrementedTranscription += ' ' + lastResult;
+        setTranscription(incrementedTranscription);
       };
 
-      recognitionInstance.onerror = (event) => {
+      recognition.onerror = (event) => {
         console.error("Speech recognition error", event);
       };
 
-      recognitionInstance.onend = () => {
-        setRecording(false);
-        console.log("Speech recognition ended");
-      };
-
-      setRecognition(recognitionInstance);
+      recognitionRef.current = recognition;
     } else {
       alert("Your browser does not support the Web Speech API");
     }
-
-    // Initialize audio context and analyser
-    const initAudio = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser = audioContext.createAnalyser();
-        const microphone = audioContext.createMediaStreamSource(stream);
-        const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
-
-        analyser.smoothingTimeConstant = 0.8;
-        analyser.fftSize = 1024;
-
-        microphone.connect(analyser);
-        analyser.connect(scriptProcessor);
-        scriptProcessor.connect(audioContext.destination);
-
-        const detectPitch = Pitchfinder.YIN({ sampleRate: audioContext.sampleRate });
-
-        scriptProcessor.onaudioprocess = () => {
-          const buffer = new Float32Array(analyser.fftSize);
-          analyser.getFloatTimeDomainData(buffer);
-          const pitch = detectPitch(buffer);
-          if (pitch) {
-            setPitch(pitch);
-            console.log(`Detected pitch: ${pitch.toFixed(2)} Hz`);
-          }
-        };
-
-        // Store references for cleanup
-        audioContextRef.current = audioContext;
-        analyserRef.current = analyser;
-        microphoneRef.current = microphone;
-        scriptProcessorRef.current = scriptProcessor;
-      } catch (err) {
-        console.error('Error accessing microphone:', err);
-      }
-    };
-
-    initAudio();
-
-    // Cleanup function
-    return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-      if (scriptProcessorRef.current) {
-        scriptProcessorRef.current.disconnect();
-      }
-      if (analyserRef.current) {
-        analyserRef.current.disconnect();
-      }
-      if (microphoneRef.current) {
-        microphoneRef.current.disconnect();
-      }
-    };
-  }, []);
+  };
 
   const startRecording = () => {
-    if (recognition && !recording) {
-      recognition.start();
-      setRecording(true);
-    }
-  };
+    setPitchData([]);
+    setVolumeData([]);
+    setEmotionData([]);
+    setTranscription("");
+    setRecording(true);
+    
+    initAudio();
+    initSpeechRecognition();
+    recognitionRef.current?.start();
 
-  const stopRecording = () => {
-    if (recognition && recording) {
-      recognition.stop();
-      setRecording(false);
-    }
-  };
+    intervalRef.current = setInterval(() => {
+      if (analyserRef.current) {
+        const bufferLength = analyserRef.current.fftSize;
+        const dataArray = new Float32Array(bufferLength);
+        analyserRef.current.getFloatTimeDomainData(dataArray);
 
-  const handleVideoOnPlay = () => {
-    setInterval(async () => {
-      if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
-        const video = webcamRef.current.video;
-        const canvas = canvasRef.current;
-        const displaySize = {
-          width: video.videoWidth,
-          height: video.videoHeight,
-        };
+        const rms = Math.sqrt(dataArray.reduce((sum, val) => sum + val * val, 0) / bufferLength);
+        setVolumeData((prev) => [...prev, rms]);
 
-        faceapi.matchDimensions(canvas, displaySize);
-
-        const detections = await faceapi
-          .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-          .withFaceExpressions();
-
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-        const context = canvas.getContext("2d");
-        if (context) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          faceapi.draw.drawDetections(canvas, resizedDetections);
-          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+        const detectPitch = Pitchfinder.YIN({ sampleRate: audioContextRef.current.sampleRate });
+        const pitch = detectPitch(dataArray);
+        if (pitch && pitch < 1000) {
+          setPitchData((prev) => [...prev, pitch]);
         }
       }
-    }, 100);
+    }, 1000);
+  };
+  
+  const sendData = async () => {
+    // Collect the required data
+    const data = {
+      transcription,
+      pitchData, // Send the full array
+      volumeData, // Send the full array
+      emotionData, // Send the full array
+    };
+  
+    try {
+      console.log("Sending data HERE>>:", JSON.stringify(data));
+  
+      const response = await fetch("http://127.0.0.1:5000/api/pitch", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+  
+      if (response.ok) {
+        console.log("Data successfully sent!");
+        const result = await response.json();
+        console.log("Server response:", result);
+      } else {
+        console.error("Error sending data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+ 
+  const stopRecording = () => {
+    recognitionRef.current?.stop();
+    setRecording(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    sendData();
   };
 
   return (
@@ -177,11 +158,12 @@ export default function PitchPage() {
       </button>
       <h2 className="mt-4 font-semibold">Transcription:</h2>
       <p className="text-lg">{transcription}</p>
+      <h2 className="mt-4 font-semibold">Current Pitch: {pitchData[pitchData.length - 1]?.toFixed(2)} Hz</h2>
+      <h2 className="mt-4 font-semibold">Current Volume: {volumeData[volumeData.length - 1]?.toFixed(2)}</h2>
       <div style={{ position: "relative" }}>
         <Webcam
           ref={webcamRef}
           audio={false}
-          onPlay={handleVideoOnPlay}
           style={{ width: 640, height: 480 }}
         />
         <canvas
@@ -198,3 +180,4 @@ export default function PitchPage() {
     </div>
   );
 }
+
