@@ -231,3 +231,4 @@ def rubric(text):
 
     except Exception as e:
         return str(e)
+
