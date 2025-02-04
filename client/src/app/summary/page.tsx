@@ -50,9 +50,11 @@ const Summary = () => {
     sentiment_feedback: searchParams.get("sentiment") || "",
     modulation_analysis: searchParams.get("modulation") || "",
     articulation_analysis: searchParams.get("articulation") || "",
-    persuasiveness_feedback: searchParams.get("persuasivness") || "",
+    persuasiveness_feedback: searchParams.get("persuasiveness") || "",
     rubrik_feedback: searchParams.get("rubrik") || "",
   }
+  console.log(data);
+
   return <SummaryPage data={data}/>
 
 }

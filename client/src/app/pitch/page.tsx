@@ -18,7 +18,7 @@ export default function PitchPage() {
   const router = useRouter();
   const handleProjectNavigation = () => {
     router.push(
-      `/summary?filler=${encodeURIComponent(filler)}&fillerNum=${encodeURIComponent(fillerNum)}&sentiment=${encodeURIComponent(sentiment)}&modulation=${encodeURIComponent(modulation)}&articulation=${encodeURIComponent(articulation)}&persuasiveness=${encodeURIComponent(persuasiveness)}}&rubrik=${encodeURIComponent(rubrik)}`
+      `/summary?filler=${encodeURIComponent(filler)}&fillerNum=${encodeURIComponent(fillerNum)}&sentiment=${encodeURIComponent(sentiment)}&modulation=${encodeURIComponent(modulation)}&articulation=${encodeURIComponent(articulation)}&persuasiveness=${encodeURIComponent(persuasiveness)}\&rubrik=${encodeURIComponent(rubrik)}`
     );
   };
 
@@ -131,11 +131,11 @@ console.log("Project Name:", projectName);
   
         const context = canvas.getContext("2d");
      
-        if (context) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          faceapi.draw.drawDetections(canvas, resizedDetections);
-          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-        }
+        // if (context) {
+        //   context.clearRect(0, 0, canvas.width, canvas.height);
+        //   faceapi.draw.drawDetections(canvas, resizedDetections);
+        //   faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+        // }
   
 
         if (detectEmotionRef.current) {  
@@ -207,10 +207,9 @@ console.log("Project Name:", projectName);
         console.log("Data successfully sent!");
         const result = await response.json();
         console.log("Server response:", result);
-        
         // Update state variables with received data
       setFiller(result.filler_feedback || "");
-      setFillerNum(result.filler_num || "");
+      setFillerNum(result.filler_data.count || "");
       setSentiment(result.sentiment_feedback || "");
       setModulation(result.modulation_analysis || "");
       setArticulation(result.articulation_analysis || "");

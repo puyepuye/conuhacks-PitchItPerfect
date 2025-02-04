@@ -45,7 +45,7 @@ def register_routes(app):
             return jsonify({"error": "Invalid JSON data"}), 400
 
         # Filler words analysis
-        text = data.get("text", "")
+        text = data.get("transcription")
         filler_feedback = None
         if text:
             filler_data = analyze_filler_words(text)
@@ -56,12 +56,12 @@ def register_routes(app):
         sentiment_feedback = analyze_sentiment(text, context)
 
         # Modulation analysis
-        pitch_data = data.get("pitch_data", [])
-        volume_data = data.get("volume_data", [])
+        pitch_data = data.get("pitchData", [])
+        volume_data = data.get("volumeData", [])
         modulation_analysis = analyze_modulation(pitch_data, volume_data)
 
         # Modulation with articulation analysis
-        words = data.get("words", [])
+        words = data.get("transcription", [])
         articulation_analysis = analyze_modulation_with_articulation(
             pitch_data, volume_data, words
         )
@@ -90,33 +90,29 @@ def register_routes(app):
             return jsonify({"error": "Invalid JSON data"}), 400
 
         # Filler words analysis
-        text = data.get("text", "")
-        filler_feedback = None
-        if text:
-            filler_data = analyze_filler_words(text)
-            filler_feedback = generate_filler_feedback(filler_data)
+        text = data.get("transcription")
+        filler_data = analyze_filler_words(text)
+        filler_feedback = generate_filler_feedback(filler_data)
 
         # Sentiment analysis
         context = data.get("context", "enthusiastic")
         sentiment_feedback = analyze_sentiment(text, context)
 
         # Modulation analysis
-        pitch_data = data.get("pitch_data", [])
-        volume_data = data.get("volume_data", [])
+        pitch_data = data.get("pitchData", [])
+        volume_data = data.get("volumeData", [])
         modulation_analysis = analyze_modulation(pitch_data, volume_data)
 
         # Modulation with articulation analysis
-        words = data.get("words", [])
+        words = data.get("transcription")
         articulation_analysis = analyze_modulation_with_articulation(
             pitch_data, volume_data, words
         )
+        # # Persuasiveness analysis
+        # persuasiveness_feedback = is_persuasive(text, context)
 
-        # Persuasiveness analysis
-        persuasiveness_feedback = is_persuasive(text, context)
-
-        # Rubric evaluation
-        rubric_feedback = rubric(text)
-
+        # # Rubric evaluation
+        # rubric_feedback = rubric(text)
         # Return all results in one response
         return jsonify(
             {
@@ -124,8 +120,8 @@ def register_routes(app):
                 "filler_data": filler_data,
                 "sentiment_feedback": sentiment_feedback,
                 "modulation_analysis": modulation_analysis,
-                "articulation_analysis": articulation_analysis,
-                "persuasiveness_feedback": persuasiveness_feedback,
-                "rubric_feedback": rubric_feedback,
+                "articulation_analysis": articulation_analysis
+                # "persuasiveness_feedback": persuasiveness_feedback,
+                # "rubric_feedback": rubric_feedback,
             }
         ), 200

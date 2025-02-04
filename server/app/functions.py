@@ -18,7 +18,7 @@ nltk.download("punkt")
 
 def analyze_filler_words(text):
     filler_words = ["um", "like", "you know", "so", "uh", "yeah", "maybe"]
-    words = text.split()
+    words = text.split(" ")
     fillers_used = [word for word in words if word.lower() in filler_words]
     return {"filler_words": fillers_used, "count": len(fillers_used)}
 
@@ -27,7 +27,7 @@ def generate_filler_feedback(filler_data):
     filler_words_count = filler_data["count"]
     filler_words = filler_data["filler_words"]
     filler_feedback = ""
-
+    filler_words = [word for word in filler_words if word.lower() != ""]
     if filler_words_count > 3:
         filler_feedback = f"Try to avoid using too many filler words. You used {filler_words_count} of them: {', '.join(filler_words)}."
     elif filler_words_count > 0:
@@ -108,79 +108,99 @@ def analyze_modulation(pitch_data, volume_data):
 def analyze_modulation_with_articulation(pitch_data, volume_data, words):
     """
     Analyzes pitch, volume, and articulation based on context-specific criteria.
+    Handles different input lengths by truncating or padding them.
 
     Parameters:
     - pitch_data (list or numpy array): A sequence of pitch values over time.
     - volume_data (list or numpy array): A sequence of volume values over time.
     - words (list): A list of words spoken, in the same order as the pitch and volume data.
-    - context (str): The context for the pitch (either 'students' or 'professionals').
 
     Returns:
-    - dict: Contains analysis feedback for modulation, articulation, and context-specific criteria.
+    - list: Contains analysis feedback for modulation, articulation, and emphasis.
     """
-    # Check if the inputs are valid
-    if (
-        len(pitch_data) == 0
-        or len(volume_data) == 0
-        or len(words) == 0
-        or len(pitch_data) != len(volume_data) != len(words)
-    ):
+
+    print("pitch:", pitch_data)
+    print("volume:", volume_data)
+    print("words:", words)
+
+    words = words.split(" ")
+    words = set([word for word in words if word != ""])
+
+    # Check for empty inputs
+    if not pitch_data or not volume_data or not words:
         return {
-            "error": "Invalid input data. Ensure pitch, volume, and words data are of the same length."
+            "error": "Invalid input data. Ensure pitch, volume, and words data are not empty."
         }
 
-    # Load spaCy model for NLP tasks (use the en_core_web_sm model or a custom model if needed)
+    # Convert inputs to NumPy arrays for easy manipulation
+    pitch_data = np.array(pitch_data, dtype=float)
+    volume_data = np.array(volume_data, dtype=float)
+    words = np.array(words, dtype=str)
+
+    # Find the target length (length of the words list)
+    target_length = len(words)
+
+    # Adjust lengths to match words length
+    if len(pitch_data) < target_length:
+        pitch_data = np.pad(pitch_data, (0, target_length - len(pitch_data)), constant_values=np.mean(pitch_data))
+    elif len(pitch_data) > target_length:
+        pitch_data = pitch_data[:target_length]
+
+    if len(volume_data) < target_length:
+        volume_data = np.pad(volume_data, (0, target_length - len(volume_data)), constant_values=np.mean(volume_data))
+    elif len(volume_data) > target_length:
+        volume_data = volume_data[:target_length]
+
+    # Load spaCy model for NLP tasks
     nlp = spacy.load("en_core_web_sm")
     sentence = " ".join(words)
-    # Process the text with spaCy to identify key emphasis words (nouns, verbs, adjectives)
     doc = nlp(sentence)
 
-    # Extract key emphasis words
-    emphasized_words = []
-    for token in doc:
-        if token.pos_ in [
-            "NOUN",
-            "VERB",
-            "ADJ",
-        ]:  # Focus on nouns, verbs, and adjectives NLP Based contextual emphasis
-            emphasized_words.append(token.text)
+    # Extract key emphasis words (nouns, verbs, adjectives)
+    emphasized_words = [token.text for token in doc if token.pos_ in ["NOUN", "VERB", "ADJ"]]
 
+    # Categorizing words based on emphasis
     articulation_feedback = {
         "needs_emphasis": [],
         "well_emphasized": [],
         "no_emphasis": [],
     }
 
+    mean_pitch = np.mean(pitch_data)
+    mean_volume = np.mean(volume_data)
+
     for i, word in enumerate(words):
         if word.lower() in emphasized_words:
-            if volume_data[i] < np.mean(volume_data) or pitch_data[i] < np.mean(
-                pitch_data
-            ):
+            if volume_data[i] < mean_volume or pitch_data[i] < mean_pitch:
                 articulation_feedback["needs_emphasis"].append(word)
             else:
                 articulation_feedback["well_emphasized"].append(word)
         else:
             articulation_feedback["no_emphasis"].append(word)
 
+    # Generating feedback
     articulation_feedback_text = []
 
     if articulation_feedback["needs_emphasis"]:
         articulation_feedback_text.append(
-            f"The word(s) [{', '.join(articulation_feedback['needs_emphasis'])}] need to be more emphasized. Increasing the pitch or volume will make them stand out more clearly."
+            f"The word(s) [{', '.join(articulation_feedback['needs_emphasis'])}] need to be more emphasized. "
+            "Increasing the pitch or volume will make them stand out more clearly."
         )
 
     if articulation_feedback["well_emphasized"]:
         articulation_feedback_text.append(
-            f"The word(s) [{', '.join(articulation_feedback['well_emphasized'])}] are emphasized well. This adds to the impact of your message."
+            f"The word(s) [{', '.join(articulation_feedback['well_emphasized'])}] are emphasized well. "
+            "This adds to the impact of your message."
         )
 
     if articulation_feedback["no_emphasis"]:
         articulation_feedback_text.append(
-            f"The word(s) [{', '.join(articulation_feedback['no_emphasis'])}] do not need emphasis. Keeping the focus on key words helps avoid over-emphasis and maintains clarity."
+            f"The word(s) [{', '.join(articulation_feedback['no_emphasis'])}] do not need emphasis. "
+            "Keeping the focus on key words helps avoid over-emphasis and maintains clarity."
         )
 
-    # Return the analysis results
     return articulation_feedback_text
+
 
 
 def analyze_filler_feedback(filler_data):
@@ -200,7 +220,7 @@ def analyze_filler_feedback(filler_data):
 
 def is_persuasive(text, context):
     try:
-        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        genai.configure(api_key="")
         model = genai.GenerativeModel(
             "gemini-1.5-flash"
         )  # Use "gemini-1.5-flash" for a faster/cheaper option
@@ -217,7 +237,7 @@ def is_persuasive(text, context):
 
 def rubric(text):
     try:
-        genai.configure(api_key="AIzaSyD7ujWKzDMKVM4JgewtXuFdPVE9Hj6f0bE")
+        genai.configure(api_key="")
         model = genai.GenerativeModel(
             "gemini-1.5-flash"
         )  # Use "gemini-1.5-flash" for a faster/cheaper option
