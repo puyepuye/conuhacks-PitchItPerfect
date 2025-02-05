@@ -41,6 +41,7 @@ const SummaryPage: React.FC<SummaryPageProps> = ({data}) => {
       </div>
       </div>
 
+      <Image src="/icons/pitchlogo.svg" alt="Pitch Logo Big" width={50} height={50} className="logoBig"/>
         <div className="metrics-container">
           <div className="metric-item">Filler Word Count</div>
           <div className="metric-value">{data.filler_data}</div>
@@ -90,7 +91,7 @@ const SummaryPage: React.FC<SummaryPageProps> = ({data}) => {
         {/* Persuasivness Feedback*/}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
         <div className="feedback-container">
-        <h3 className="feedback-title">Your Persuasivness</h3>
+        <h3 className="feedback-title">Your Persuasiveness</h3>
           <div className="feedback-box">
             <p> {data.persuasiveness_feedback}</p>
           </div>

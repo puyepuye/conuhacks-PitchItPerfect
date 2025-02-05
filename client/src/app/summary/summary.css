@@ -123,9 +123,9 @@
 .feedback-box {
   width: 100%;  /* Adjust width */
   max-width: 850px; /* Set max width */
-  height: 150px; /* Adjust height */
+  height: 65px; /* Adjust height */
   background: rgba(255, 255, 255, 0.1); /* Subtle transparent background */
-  border: 2px solid rgba(255, 255, 255, 0.6); /* White border */
+  border: 1px solid rgba(255, 255, 255, 0.6); /* White border */
   border-radius: 10px; /* Rounded corners */
   padding: 12px; /* Inner spacing */
   font-size: 1rem;
@@ -134,16 +134,16 @@
   overflow-y: auto; /* Enable scrolling if text is too long */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.6) transparent;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   margin-left: 20px;
 }
 
 /* Feedback Title */
 .feedback-title {
-  font-size: 1.3rem; /* Increase font size */
-  font-weight: 700; /* Make it bold */
+  font-size: 1rem; /* Increase font size */
+  font-weight: 600; /* Make it bold */
   color: white; /* Ensure it stands out */
-  margin-bottom: 15px; /* Add spacing below */
+  margin-bottom: 5px; /* Add spacing below */
   letter-spacing: 1px; /* Optional: Add spacing between letters */
   margin-left: 23px;
 }
@@ -184,4 +184,13 @@
 
 .toneYay {
   margin-left: 330px;
+}
+
+.logoBig {
+  width: 100px;
+  height: auto;
+  position: absolute;
+  top: 350px;
+  left: 950px;
+  scale: 1.5;
 }
